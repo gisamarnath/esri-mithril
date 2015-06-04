@@ -1,5 +1,5 @@
 // app namespace
-em = {};
+var em = {};
 
 require(["esri/map", "dojo/domReady!"], function(Map) { 
     'use strict';
