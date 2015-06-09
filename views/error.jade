@@ -1,6 +1,9 @@
-extends layout
-
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+doctype html
+html(lang="en")
+  head
+    title= "esri-mithril"
+  body
+    div
+      h1= message
+      h2= error.status
+      pre #{error.stack}
