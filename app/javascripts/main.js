@@ -2,7 +2,11 @@
 var em = {};
 
 $(function() {
-    var map = L.map('map').setView([45.528, -122.680], 13);
+    var map = L.map('map', {
+        center: [36.165500, -86.784721],
+        zoom: 9,
+        zoomControl: false
+    });
 
     L.esri.basemapLayer("Gray").addTo(map);
 
@@ -17,4 +21,13 @@ $(function() {
     parks.bindPopup(function(feature){
         return L.Util.template(popupTemplate, feature.properties);
     });
+
+    var menu_container = document.getElementById('menu');
+
+    em.resize = function () {
+        menu_container.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
+    };
+
+    window.addEventListener("resize", em.resize, true);
+    em.resize();
 });
