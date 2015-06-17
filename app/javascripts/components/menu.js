@@ -17,7 +17,7 @@
         },
 
         view: function (ctrl) {
-            return m('', [
+            return m('div', [
                 m('#menu'), 
                 m('#menu-click', { onclick : ctrl.expand }, 
                     m('span', { class : 'glyphicon glyphicon-menu-right' })

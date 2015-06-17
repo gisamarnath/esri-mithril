@@ -4,7 +4,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         jshint : {
-            all: ['Gruntfile.js', 'package.json', 'public/javascripts/**/*.js']
+            all: ['Gruntfile.js', 'package.json', 'app/javascripts/**/*.js']
         },
 
         concat : {
@@ -16,9 +16,9 @@ module.exports = function(grunt) {
           dist: {
             // the files to concatenate
             src: [
-              'public/javascripts/main.js',
-              'public/javascripts/components/menu.js',
-              'public/javascripts/components/parent.js',
+              'app/javascripts/main.js',
+              'app/javascripts/components/menu.js',
+              'app/javascripts/components/parent.js',
             ],
             // the location of the resulting JS file
             dest: 'dist/<%= pkg.name %>.js'
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
           target: {
             files: [{
               expand: true,
-              cwd: 'public/stylesheets',
+              cwd: 'app/stylesheets',
               src: ['*.css', '!*.min.css'],
               dest: 'dist/css',
               ext: '.min.css'
