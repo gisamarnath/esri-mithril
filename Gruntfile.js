@@ -17,6 +17,10 @@ module.exports = function(grunt) {
             // the files to concatenate
             src: [
               'app/javascripts/main.js',
+              'app/javascripts/components/component-header.js',
+              'app/javascripts/components/basemaps.js',
+              'app/javascripts/components/layers.js',
+              'app/javascripts/components/tools.js',
               'app/javascripts/components/menu.js',
               'app/javascripts/components/parent.js',
             ],

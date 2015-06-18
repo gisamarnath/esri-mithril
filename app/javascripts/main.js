@@ -28,6 +28,10 @@ $(function() {
         menu_container.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
     };
 
+    document.getElementById('menu-show').className = window.innerWidth < 768 ? 
+        'menu-collapser hide' : 
+        '';
+
     window.addEventListener("resize", em.resize, true);
     em.resize();
 });

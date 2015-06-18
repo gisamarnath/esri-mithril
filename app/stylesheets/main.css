@@ -3,10 +3,13 @@ html, body, #map {
     height : 100%;
 }
 
+a { cursor: pointer; }
+
 #menu {
+    display: block;
+    width: 300px;
     z-index: 1000;
     position: absolute;
-    width: 260px;
     left: 0;
     top: 0;
     background-color: white;
@@ -14,20 +17,37 @@ html, body, #map {
 }
 
 .menu-expanded {
-    width: 95% !important;
     display: block !important;
 }
 
-#menu-click {
-    display: none;
+.menu-collapsed {
+    display: none !important;
+}
+
+@media (max-width: 767px) {
+    #menu {
+        display: none;
+        width: 80%;
+    }
+
+    #menu-hide {
+        left: 100% !important;
+    }
+}
+
+@media (min-width: 768px) {
+    #menu-show {
+        display: none;
+    }
+}
+
+.menu-collapser {
     z-index: 1000;
     position: absolute;
-    width: 20px;
+    width: 30px;
     height: 100px;
-    left: 0;
     top: 25%;
     background-color: white;
-    opacity: 0.8;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     -moz-box-shadow:    2px 0px 2px 0px #ccc;
@@ -36,18 +56,20 @@ html, body, #map {
     cursor: pointer;
 }
 
-#menu-click > span {
+.menu-collapser > span {
     position: relative;
     top: 43px;
-    left: 3px;
+    left: 8px;
 }
 
-@media screen and (max-width: 600px) {
-    #menu {
-        display: none;
-    }
+#menu-show {
+    left: 0;
+}
 
-    #menu-click {
-        display: block;
-    }
+#menu-hide {
+    left: 300px;
+}
+
+#menu-show:hover, #menu-hide:hover {
+    color: #337ab7;
 }
