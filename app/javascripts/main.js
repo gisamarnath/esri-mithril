@@ -1,5 +1,7 @@
 // app namespace
-var em = {};
+var em = {
+    config : {}
+};
 
 $(function() {
     var map = L.map('map', {
@@ -8,13 +10,20 @@ $(function() {
         zoomControl: false
     });
 
-    L.esri.basemapLayer("Gray").addTo(map);
+    // Initializing global basemap config object
+    em.config.basemap = {
+        layer : L.esri.basemapLayer("Gray")
+    };
+
+    map.addLayer(em.config.basemap.layer);
 
     var parks = new L.esri.FeatureLayer("http://services.arcgis.com/rOo16HdIMeOBI4Mb/arcgis/rest/services/Portland_Parks/FeatureServer/0", {
         style: function () {
           return { color: "#70ca49", weight: 2 };
         }
     }).addTo(map);
+
+    em.map = map;
 
     var popupTemplate = "<h3>{NAME}</h3>{ACRES} Acres<br><small>Property ID: {PROPERTYID}<small>";
 

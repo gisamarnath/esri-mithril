@@ -11,7 +11,7 @@
 
         view: function (ctrl, args) {
             return m('div', [
-                m.component(em.ComponentHeader, { back : args.back }),
+                m.component(em.ComponentHeader, { back : args.back, title : 'Layers' }),
                 m('span', 'Layers')
             ]);
         }

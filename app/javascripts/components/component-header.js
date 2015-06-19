@@ -8,10 +8,13 @@
         },
     
         view: function (ctrl, args, extras) {
-            return m('div', [
-                m('button.btn.btn-default', 
-                    { onclick : args.back }, 
-                    m('span', { class : 'glyphicon glyphicon-chevron-left' }))
+            return m('div.bg-primary.clearfix', [
+                !args.back ? null : 
+                    m('button.close', 
+                        { onclick : args.back, 'aria-label' : 'Close', type : 'button' }, 
+                        m('span.h1', { 'aria-hidden' : 'true' }, m.trust('&times;'))
+                    ),
+                m('h4', args.title || '')
             ]);
         }
     };

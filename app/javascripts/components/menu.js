@@ -19,19 +19,22 @@
         },
 
         view: function (ctrl, args, extras) {
-            var top = null;
+            var top;
+
             switch (ctrl.component()) {
                 case 'basemaps' : top = m.component(em.Basemaps, { back : ctrl.back }); break;
                 case 'layers' : top = m.component(em.Layers, { back : ctrl.back }); break;
                 case 'tools' : top = m.component(em.Tools, { back : ctrl.back }); break;
                 default :
-                    top = m('div', [
+                    top = [];
+                    top.push(m.component(em.ComponentHeader, { title : 'Menu' }));
+                    top.push(m('div', [
                         m('ul', {class : 'nav nav-pills nav-stacked' }, [
                             m('li', m('a', { 'data-component': 'basemaps', onclick: ctrl.loadComponent }, 'Basemaps' ) ),
                             m('li', m('a', { 'data-component': 'layers', onclick: ctrl.loadComponent }, 'Layers' ) ),
                             m('li', m('a', { 'data-component': 'tools', onclick: ctrl.loadComponent }, 'Tools' ) ),
                         ])
-                    ]);
+                    ]));
                     break;
             }
 
