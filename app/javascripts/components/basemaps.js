@@ -2,43 +2,53 @@
 
     "use strict";
 
-
     var config = {
         layers: [
-            { value : 'Streets', label : 'Streets'},
-            { value : 'Topographic', label : 'Topographic'},
-            { value : 'NationalGeographic', label : 'National Geographic'},
-            { value : 'Oceans', label : 'Oceans'},
-            { value : 'Gray', label : 'Gray'},
-            { value : 'DarkGray', label : 'Dark Gray'},
-            { value : 'Imagery', label : 'Imagery'},
-            { value : 'ShadedRelief', label : 'Shaded Relief'},
-            'Terrain'
+            { value : 'Streets', label : 'Streets', active : true},
+            { value : 'Topographic', label : 'Topographic', active : false},
+            { value : 'NationalGeographic', label : 'National Geographic', active : false},
+            { value : 'Oceans', label : 'Oceans', active : false},
+            { value : 'Gray', label : 'Gray', active : false},
+            { value : 'DarkGray', label : 'Dark Gray', active : false},
+            { value : 'Imagery', label : 'Imagery', active : false},
+            { value : 'ShadedRelief', label : 'Shaded Relief', active : false},
+            { value : 'Terrain', label : 'Terrain', active : false},
         ]
     };
 
     em.Basemaps = {
         controller: function (args) {
             var that = this;
-            var layer = em.config.basemap.layer;
+            this.layers = m.prop(config.layers);
 
             this.changebasemap = function (e) {
-                if (layer) em.map.removeLayer(layer);
 
-                layer = L.esri.basemapLayer(e.target.getAttribute('data-value'));
-                em.map.addLayer(layer);
+                if (em.vm.basemap()) {
+                    em.map.removeLayer(em.vm.basemap());
+                }
+
+                var clicked_value = e.target.getAttribute('data-value');
+
+                var lyr;
+                for (var ii = 0; ii < that.layers().length; ii++) {
+                    lyr = that.layers()[ii];
+                    lyr.active = lyr.value === clicked_value;
+                }
+
+                em.vm.basemap(L.esri.basemapLayer(clicked_value));
+                em.map.addLayer(em.vm.basemap());
             };
 
             return this;
         },
 
         view: function (ctrl, args) {
-            return m('div', [
+            return m('div#basemaps', [
                 m.component(em.ComponentHeader, { back : args.back, title : 'Basemaps' }),
                 m('div', [
                     m('ul', {class : 'nav nav-pills nav-stacked' }, 
-                        config.layers.map(function (layer) {
-                            return m('li', 
+                        ctrl.layers().map(function (layer) {
+                            return m('li', {class : layer.active ? 'active' : ''}, 
                                 m('a', { onclick : ctrl.changebasemap, 'data-value' : layer.value }, layer.label )
                             );
                         })

@@ -1,5 +1,7 @@
 (function() {
+
     var Parent = {
+
         controller: function () {
             var that = this;
             var menu = null;
