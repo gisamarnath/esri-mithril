@@ -1,33 +1,88 @@
 // app namespace
 var em = {
-    config : {},
+    config : {
+        layers : [
+            {
+                label : 'Geology',
+                url : 'http://sampleserver5.arcgisonline.com/arcgis/rest/services/Energy/Geology/MapServer',
+                type : 'ms',
+                visible : true
+            },
+            {
+                label : 'USA',
+                url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer',
+                type : 'ms',
+                visible : false
+            }
+        ]
+    },
+
     vm : {
-        basemap : m.prop(L.esri.basemapLayer("Streets"))
+        // current active basemap
+        basemap : m.prop(L.esri.basemapLayer("Streets")),
+
+        // { layer : {}, legend : {} }
+        layers : m.prop([])
     }
 };
 
-$(function() {
-    var map = L.map('map', { 
-        // center: [36.165500, -86.784721], // nashville, tn
-        center: [37.817764, -122.392181], // san fran
-        zoom: 9,
-        zoomControl: false
-    });
+(function () {
 
-    em.map = map;
+    function appstart() {
+        var map = L.map('map', { 
+            // center: [36.165500, -86.784721], // nashville
+            center: [37.817764, -122.392181], // san fran
+            zoom: 9,
+            zoomControl: false
+        });
 
-    var menu_container = document.getElementById('menu');
+        em.map = map;
 
-    em.resize = function () {
-        menu_container.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
-    };
+        var menu = document.getElementById('menu');
+        var menu_container = document.getElementById('menu-container');
 
-    document.getElementById('menu-show').className = window.innerWidth < 768 ? 
-        'menu-collapser hide' : 
-        '';
+        em.resize = function () {
+            menu.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
+            menu_container.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
+        };
 
-    em.map.addLayer(em.vm.basemap());
+        document.getElementById('menu-show').className = window.innerWidth < 768 ? 
+            'menu-collapser hide' : 
+            '';
 
-    window.addEventListener("resize", em.resize, true);
-    em.resize();
-});
+        em.map.addLayer(em.vm.basemap());
+
+        window.addEventListener("resize", em.resize, true);
+        em.resize();
+
+        init();
+    }
+
+    function init() {
+
+        em.config.layers.forEach(function (l, idx) {
+            // only retrieve legends for default visible layers
+            if (l.visible !== true) {
+                return;
+            }
+            
+            m.request({ method : 'GET', url : l.url + '/legend?f=json' })
+            .then(function (e) {
+                e.layers.forEach(function (layer, idx) {
+                    layer.visible = false;
+                    layer.expanded = false;
+                });
+
+                em.vm.layers().push({
+                    label : l.label,
+                    layer : L.esri.dynamicMapLayer(l.url, { opacity: 0.5, }).addTo(em.map),
+                    legend : e,
+                    visible : true,
+                    expanded : false
+                });
+            });
+        });
+    }
+
+    $(appstart);
+})();

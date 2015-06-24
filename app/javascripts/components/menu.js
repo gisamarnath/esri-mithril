@@ -39,7 +39,7 @@
             }
 
             return m('div', [
-                top,
+                m('div#menu-container', top),
                 m('#menu-hide.menu-collapser', { onclick : args.collapse }, 
                     m('span', { class : 'glyphicon glyphicon-option-vertical' })
                 )

@@ -16,6 +16,10 @@ a { cursor: pointer; }
     opacity: 0.8;
 }
 
+#menu-container {
+    overflow-y: auto;
+}
+
 .menu-expanded {
     display: block !important;
 }
@@ -72,4 +76,8 @@ a { cursor: pointer; }
 
 #menu-show:hover, #menu-hide:hover {
     color: #337ab7;
+}
+
+#em-layers .panel-heading {
+    cursor: pointer;
 }
