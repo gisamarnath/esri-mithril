@@ -23,7 +23,9 @@
             };
 
             this.domloaded = function (ele, isInit, ctx) {
-                if (isInit) return;
+                if (isInit) {
+                    return;
+                }
 
                 menu = document.getElementById('menu');
                 show = document.getElementById('menu-show');

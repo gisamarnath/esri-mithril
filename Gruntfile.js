@@ -4,7 +4,10 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         jshint : {
-            all: ['Gruntfile.js', 'package.json', 'app/javascripts/**/*.js']
+            all: ['Gruntfile.js', 'package.json', 'app/javascripts/**/*.js'],
+            options: {
+                jshintrc: true
+            }
         },
 
         concat : {
@@ -52,7 +55,8 @@ module.exports = function(grunt) {
               cwd: 'app/stylesheets',
               src: ['*.css', '!*.min.css'],
               dest: 'dist/css',
-              ext: '.min.css'
+              ext: '.min.css',
+              extDot: 'last' // Extensions in filenames begin after the last dot. http://stackoverflow.com/a/24702850/23566
             }]
           }
         }
