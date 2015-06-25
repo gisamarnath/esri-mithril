@@ -52,7 +52,8 @@ module.exports = function(grunt) {
               cwd: 'app/stylesheets',
               src: ['*.css', '!*.min.css'],
               dest: 'dist/css',
-              ext: '.min.css'
+              ext: '.min.css',
+              extDot: 'last' // Extensions in filenames begin after the last dot. http://stackoverflow.com/a/24702850/23566
             }]
           }
         }
