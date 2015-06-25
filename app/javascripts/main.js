@@ -36,6 +36,9 @@ var em = {
             zoomControl: false
         });
 
+        // adding a zoomControl after map creation allows us to override the default position
+        new L.Control.Zoom({ position: 'topright' }).addTo(map);
+
         em.map = map;
 
         var menu = document.getElementById('menu');
