@@ -7,5 +7,8 @@
 
     // prohibit the use of arguments.caller and arguments.callee
     // both .caller and .callee will be deprecated in future versions of JavaScript
-    "noarg": true
+    "noarg": true,
+
+    // prohibit the use of a variable before it was defined
+    "latedef": true
 }
