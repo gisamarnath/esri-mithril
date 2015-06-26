@@ -1,0 +1,14 @@
+{
+    // require curly braces around blocks in loops and conditionals
+    "curly": true,
+
+    // prohibit use of == and != in favor of === and !==
+    "eqeqeq": true,
+
+    // prohibit the use of arguments.caller and arguments.callee
+    // both .caller and .callee will be deprecated in future versions of JavaScript
+    "noarg": true,
+
+    // prohibit the use of a variable before it was defined
+    "latedef": true
+}
