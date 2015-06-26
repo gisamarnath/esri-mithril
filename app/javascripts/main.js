@@ -95,8 +95,8 @@ var em = {
                     layer : lyr,
                     visibleLayers : visibleLayers,
                     legend : e,
-                    visible : m.prop(l.visible),
-                    expanded : m.prop(l.expanded)
+                    visible : l.visible,
+                    expanded : l.expanded
                 });
             });
         });

@@ -7,6 +7,8 @@
             var that = this;
             this.layers = em.vm.layers;
 
+            console.log(this.layers());
+
             this.toggleServiceVisibility = function (e) {
                 this.visible = !this.visible;
 
