@@ -10,10 +10,10 @@ module.exports = function(grunt) {
         concat : {
           options: {
             // define a string to put between each file in the concatenated output
-            separator: ';',
+            // separator: ';',
             banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd HH:mm") %> */\n'
           },
-          dist: {
+          js: {
             // the files to concatenate
             src: [
               'app/javascripts/main.js',
@@ -26,6 +26,13 @@ module.exports = function(grunt) {
             ],
             // the location of the resulting JS file
             dest: 'dist/<%= pkg.name %>.js'
+          },
+          // concats all css to dist/css
+          css: {
+            src: [
+              'app/stylesheets/*.css',
+            ],
+            dest: 'dist/<%= pkg.name %>.css'
           }
         },
 
@@ -36,7 +43,7 @@ module.exports = function(grunt) {
 
           dist: {
             files: {
-              'dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+              'dist/<%= pkg.name %>.min.js': ['<%= concat.js.dest %>']
             }
           }
         },
@@ -49,9 +56,9 @@ module.exports = function(grunt) {
           target: {
             files: [{
               expand: true,
-              cwd: 'app/stylesheets',
+              cwd: 'dist',
               src: ['*.css', '!*.min.css'],
-              dest: 'dist/css',
+              dest: 'dist',
               ext: '.min.css'
             }]
           }

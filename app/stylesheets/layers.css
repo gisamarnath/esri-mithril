@@ -1,0 +1,14 @@
+#em-layers .panel-heading {
+    cursor: pointer;
+    padding: 5px 15px;
+}
+
+#em-layers .panel {
+    border: 0;
+    margin-bottom: 0;
+}
+
+.layer-header > .btn-group {
+    margin-right: 7px;
+    margin-top: 3px;
+}

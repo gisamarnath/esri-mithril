@@ -78,6 +78,6 @@ a { cursor: pointer; }
     color: #337ab7;
 }
 
-#em-layers .panel-heading {
-    cursor: pointer;
+.inline-block {
+    display: inline-block;
 }
