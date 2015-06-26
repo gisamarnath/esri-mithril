@@ -29,20 +29,48 @@
                 e.preventDefault();
             };
 
+            function _toggleLayerVisibility(layer, layerIds, visible) {
+                var visibleLayers = layer.getLayers();
+
+                if (visible === false) {
+                    layerIds.forEach(function (layerId, idx) {
+                        layerId = visibleLayers.indexOf(layerId);
+                        
+                        if (layerId >= 0) {
+                            visibleLayers.splice(layerId, 1);
+                        }
+                    });
+                }
+                else {
+                    visibleLayers = visibleLayers.concat(layerIds);
+                }
+
+                layer.setLayers(visibleLayers);
+            }
+
             this.toggleLayerVisibility = function (e) {
                 // 'this' hasOwnProperty item and legendLayer
-                var idx = this.item.visibleLayers.indexOf(this.legendLayer.layerId);
+                var visibleLayers = this.item.layer.getLayers();
+                var idx = visibleLayers.indexOf(this.legendLayer.layerId);
 
                 if (idx !== -1) {
                     this.legendLayer.visible = false;
-                    this.item.visibleLayers.splice(idx, 1);
                 }
                 else {
                     this.legendLayer.visible = true;
-                    this.item.visibleLayers.push(this.legendLayer.layerId);
+
+                    // if the service layer is hidden then we need to show it
+                    // and add it to the map
+                    if (this.item.visible !== true) {
+                        this.item.visible = true;
+
+                        if (em.map.hasLayer(this.item.layer) !== true) {
+                            em.map.addLayer(this.item.layer);
+                        }
+                    }
                 }
 
-                this.item.layer.setLayers(this.item.visibleLayers);
+                _toggleLayerVisibility(this.item.layer, [this.legendLayer.layerId], this.legendLayer.visible);
 
                 e.preventDefault();
             };
@@ -54,6 +82,10 @@
             };
 
             function toggleSubLayers(item, expanded) {
+                if (item.expanded === false && expanded === true) {
+                    item.expanded = true;
+                }
+
                 item.legend.layers.forEach(function (layer, idx) {
                     layer.expanded = expanded;
                 });
@@ -66,6 +98,40 @@
 
             this.collapseAll = function (e) {
                 toggleSubLayers(this, false);
+                e.preventDefault();
+            };
+
+            this.showAll = function (e) {
+                var visibleLayers = [];
+
+                // if the service layer is hidden then we need to show it
+                // and add it to the map
+                if (this.visible !== true) {
+                    this.visible = true;
+
+                    if (em.map.hasLayer(this.layer) !== true) {
+                        em.map.addLayer(this.layer);
+                    }
+                }
+
+                this.legend.layers.forEach(function (layer, idx) {
+                    layer.visible = true;
+                    visibleLayers.push(layer.layerId);
+                });
+
+                _toggleLayerVisibility(this.layer, visibleLayers, true);
+                e.preventDefault();
+            };
+
+            this.hideAll = function (e) {
+                var visibleLayers = [];
+
+                this.legend.layers.forEach(function (layer, idx) {
+                    layer.visible = false;
+                    visibleLayers.push(layer.layerId);
+                });
+
+                _toggleLayerVisibility(this.layer, visibleLayers, false);
                 e.preventDefault();
             };
 
@@ -98,7 +164,10 @@
                                                 item.expanded === false ? 'Expand' : 'Collapse')),
                                             m('li.divider', { role : 'separator' }),
                                             m('li', m('a[href=#]', { onclick : ctrl.expandAll.bind(item) }, 'Expand All')),
-                                            m('li', m('a[href=#]', { onclick : ctrl.collapseAll.bind(item) }, 'Collapse All'))
+                                            m('li', m('a[href=#]', { onclick : ctrl.collapseAll.bind(item) }, 'Collapse All')),
+                                            m('li.divider', { role : 'separator' }),
+                                            m('li', m('a[href=#]', { onclick : ctrl.showAll.bind(item) }, 'Show All')),
+                                            m('li', m('a[href=#]', { onclick : ctrl.hideAll.bind(item) }, 'Hide All'))
                                         ])
                                     ])
                                 ]
@@ -112,7 +181,7 @@
                                                 m('button', 
                                                     { 
                                                         'data-toggle' : 'dropdown',
-                                                        class : (l.visible === false ?
+                                                        class : (item.visible === false || l.visible === false ?
                                                             'btn btn-default dropdown-toggle' :
                                                             'btn btn-primary dropdown-toggle')
                                                     },

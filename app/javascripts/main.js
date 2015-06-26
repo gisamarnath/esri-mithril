@@ -15,7 +15,7 @@ var em = {
                 label : 'USA',
                 url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer',
                 type : 'ms',
-                visible : false,
+                visible : true,
                 expanded : false
             }
         ]
@@ -80,20 +80,22 @@ var em = {
                 var visibleLayers = [-1];
                 var lyr;
 
+                e.layers.forEach(function (layer, idx) {
+                    layer.visible = l.visible;
+                    layer.expanded = l.expanded;
+
+                    if (layer.visible === true) {
+                        visibleLayers.push(layer.layerId);
+                    }
+                });
+
                 lyr = l.visible === true ?
                     L.esri.dynamicMapLayer(l.url, { opacity: 0.5, layers : visibleLayers }).addTo(em.map) :
                     L.esri.dynamicMapLayer(l.url, { opacity: 0.5, layers : visibleLayers });
 
-                e.layers.forEach(function (layer, idx) {
-                    layer.visible = l.visible;
-                    layer.expanded = l.expanded;
-                    visibleLayers.push(layer.layerId);
-                });
-
                 em.vm.layers().push({
                     label : l.label,
                     layer : lyr,
-                    visibleLayers : visibleLayers,
                     legend : e,
                     visible : l.visible,
                     expanded : l.expanded
