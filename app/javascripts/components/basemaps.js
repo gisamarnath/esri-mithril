@@ -16,7 +16,7 @@
         ]
     };
 
-    em.Basemaps = {
+    em.component.Basemaps = {
         controller: function (args) {
             var that = this;
             this.layers = m.prop(config.layers);

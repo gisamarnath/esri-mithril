@@ -19,9 +19,13 @@ module.exports = function(grunt) {
           js: {
             // the files to concatenate
             src: [
+              'node_modules/minpubsub/minpubsub.js',
               'app/javascripts/main.js',
+              'app/javascripts/util/token.js',
               'app/javascripts/components/component-header.js',
-              'app/javascripts/components/basemaps.js',
+              // 'app/javascripts/components/draw.js',
+              'app/javascripts/components/popup.js',
+              'app/javascripts/components/basemaps.js',              
               'app/javascripts/components/layers.js',
               'app/javascripts/components/tools.js',
               'app/javascripts/components/menu.js',

@@ -22,7 +22,7 @@
                 }
             };
 
-            this.domloaded = function (ele, isInit, ctx) {
+            this.domloaded = function (ele, isInit) {
                 if (isInit) {
                     return;
                 }
@@ -30,6 +30,8 @@
                 menu = document.getElementById('menu');
                 show = document.getElementById('menu-show');
                 hide = document.getElementById('menu-hide');
+
+                publish('menu.loaded');
             };
 
             return this;
@@ -37,10 +39,11 @@
     
         view: function (ctrl) {
             return [
-                m('#menu.menu-expanded', { config : ctrl.domloaded }, [ m.component(em.Menu, { collapse : ctrl.toggle_menu } ) ]),
+                m('#menu.menu-expanded', { config : ctrl.domloaded }, [ m.component(em.component.Menu, { collapse : ctrl.toggle_menu } ) ]),
                 m('#menu-show', { onclick : ctrl.toggle_menu }, 
                     m('span', { class : 'glyphicon glyphicon-option-vertical' })
-                )
+                ),
+                m('#em-modal.modal.fade', { role : 'dialog', tabindex : -1 }, m.component(em.component.Popup))
             ];
         }
     };

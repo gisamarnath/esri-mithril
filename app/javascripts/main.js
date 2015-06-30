@@ -1,20 +1,19 @@
 // app namespace
 var em = {
     component : {},
+    util : {},
 
     config : {
         layers : [
             {
                 label : 'Geology',
                 url : 'http://sampleserver5.arcgisonline.com/arcgis/rest/services/Energy/Geology/MapServer',
-                type : 'ms',
                 visible : false,
                 expanded : false
             },
             {
                 label : 'USA',
                 url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer',
-                type : 'ms',
                 visible : true,
                 expanded : false
             }
@@ -33,11 +32,17 @@ var em = {
 (function () {
 
     function appstart() {
+        loadMap();
+        appInit();
+    }
+
+    function loadMap() {
         var map = L.map('map', { 
-            // center: [36.165500, -86.784721], // nashville
+            // center: [36.165500, -86.784721], // nashvillecomponent
             center: [37.817764, -122.392181], // san fran
             zoom: 9,
-            zoomControl: false
+            zoomControl: false,
+            attributionControl: false
         });
 
         // adding a zoomControl after map creation allows us to override the default position
@@ -45,33 +50,12 @@ var em = {
 
         em.map = map;
 
-        var menu = document.getElementById('menu');
-        var menu_container = document.getElementById('menu-container');
-
-        em.resize = function () {
-            menu.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
-            menu_container.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
-        };
-
-        document.getElementById('menu-show').className = window.innerWidth < 768 ? 
-            'menu-collapser hide' : 
-            '';
-
         em.map.addLayer(em.vm.basemap());
-
-        window.addEventListener("resize", em.resize, true);
-        em.resize();
-
-        init();
     }
 
-    function init() {
+    function appInit() {
 
         em.config.layers.forEach(function (l, idx) {
-            // only retrieve legends for default visible layers
-            // if (l.visible !== true) {
-            //     return;
-            // }
             
             m.request({ method : 'GET', url : l.url + '/legend?f=json' })
             .then(function (e) {
@@ -102,7 +86,29 @@ var em = {
                 });
             });
         });
+
+        publish("app.start");
     }
+
+    // UI load handler
+    subscribe('menu.loaded', function loadUI() {
+        var menu = document.getElementById('menu');
+        var menu_container = document.getElementById('menu-container');
+        var menu_show = document.getElementById('menu-show');
+
+        em.resize = function () {
+            console.log('menu resize');
+            menu.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
+            menu_container.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
+        };
+
+        menu_show.className = window.innerWidth < 768 ? 
+            'menu-collapser hide' : 
+            '';
+
+        window.addEventListener("resize", em.resize, true);
+        em.resize();
+    });
 
     $(appstart);
 })();

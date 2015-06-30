@@ -2,7 +2,7 @@
 
     "use strict";
 
-    em.Layers = {
+    em.component.Layers = {
         controller: function (args) {
             var that = this;
             this.layers = em.vm.layers;
