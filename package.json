@@ -18,5 +18,8 @@
     "minpubsub": "0.0.1",
     "morgan": "~1.5.1",
     "serve-favicon": "^2.3.0"
+  },
+  "devDependencies": {
+    "grunt-jsdoc": "^0.6.7"
   }
 }

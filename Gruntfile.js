@@ -10,6 +10,12 @@ module.exports = function(grunt) {
             }
         },
 
+        jsdoc : {
+          dist : {
+            src: ['app/javascripts/**/*.js']
+          }
+        },
+
         concat : {
           options: {
             // define a string to put between each file in the concatenated output
@@ -21,9 +27,9 @@ module.exports = function(grunt) {
             src: [
               'node_modules/minpubsub/minpubsub.js',
               'app/javascripts/main.js',
-              'app/javascripts/util/token.js',
+              'app/javascripts/util/util.js',
+              'app/javascripts/util/auth.js',
               'app/javascripts/components/component-header.js',
-              // 'app/javascripts/components/draw.js',
               'app/javascripts/components/popup.js',
               'app/javascripts/components/basemaps.js',              
               'app/javascripts/components/layers.js',
@@ -77,8 +83,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-jsdoc');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'cssmin']);
+  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'cssmin', 'jsdoc']);
 
 };

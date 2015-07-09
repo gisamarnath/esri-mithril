@@ -1,7 +1,11 @@
+/**
+ * @return {}
+ */
 (function() {
 
     "use strict";
 
+    
     em.component.Layers = {
         controller: function (args) {
             var that = this;

@@ -1,9 +1,30 @@
-// app namespace
+/**
+ * esri-mithril global namespace
+ * @type {Object}
+ */
 var em = {
+    /**
+     * global component object
+     * @type {Object}
+     */
     component : {},
+
+    /**
+     * global utility object
+     * @type {Object}
+     */
     util : {},
 
+    /**
+     * global config object
+     * @type {Object}
+     */
     config : {
+
+        /**
+         * global config layers
+         * @type {Array}
+         */
         layers : [
             {
                 label : 'Geology',
@@ -16,10 +37,25 @@ var em = {
                 url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer',
                 visible : true,
                 expanded : false
+            },
+            {
+                label : 'Auth Test',
+                url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire_secure_ac/MapServer',
+                visible : true,
+                expanded : false,
+                loginUrl : 'http://sampleserver6.arcgisonline.com/arcgis/tokens/generateToken'
             }
-        ]
+        ],
+
+        popup : {
+            type : m.prop('auth'),
+            title : m.prop('Title'),
+            tag : m.prop('tag'),
+            warning : m.prop('')
+        }
     },
 
+    /** global view model */
     vm : {
         // current active basemap
         basemap : m.prop(L.esri.basemapLayer("Streets")),
@@ -30,10 +66,17 @@ var em = {
 };
 
 (function () {
-
+    
+    /**
+     * Called on dom loaded
+     * 
+     * @return {}
+     */
     function appstart() {
         loadMap();
-        appInit();
+        loadLayers();
+
+        publish("app.start");
     }
 
     function loadMap() {
@@ -53,41 +96,49 @@ var em = {
         em.map.addLayer(em.vm.basemap());
     }
 
-    function appInit() {
-
+    /**
+    * Loads map layers located in the layer config
+    *
+    * Checks each layer to see if the layer requires authentication
+    */
+    function loadLayers() {
         em.config.layers.forEach(function (l, idx) {
-            
-            m.request({ method : 'GET', url : l.url + '/legend?f=json' })
-            .then(function (e) {
-                // Add the -1 so when all other layers are removed it's not
-                // and empty array which would show all layers
-                var visibleLayers = [-1];
-                var lyr;
-
-                e.layers.forEach(function (layer, idx) {
-                    layer.visible = l.visible;
-                    layer.expanded = l.expanded;
-
-                    if (layer.visible === true) {
-                        visibleLayers.push(layer.layerId);
-                    }
+            // if loginUrl is present then the layer needs a token
+            if (l.loginUrl) {
+                em.auth.init(l, function (token) {
+                    loadLayer(l, token);
                 });
-
-                lyr = l.visible === true ?
-                    L.esri.dynamicMapLayer(l.url, { opacity: 0.5, layers : visibleLayers }).addTo(em.map) :
-                    L.esri.dynamicMapLayer(l.url, { opacity: 0.5, layers : visibleLayers });
-
-                em.vm.layers().push({
-                    label : l.label,
-                    layer : lyr,
-                    legend : e,
-                    visible : l.visible,
-                    expanded : l.expanded
-                });
-            });
+            }
+            else {
+                loadLayer(l);
+            }
         });
+    }
 
-        publish("app.start");
+    /**
+     * Loads an individual layers legend, creates map layer, and adds layer to map
+     * 
+     * @param  {Object}
+     * @param  {String}
+     * @return {null}
+     */
+    function loadLayer(config, token) {
+        em.util.getLegend(config, token, function (e, visibleLayers) {
+            var layer = L.esri.dynamicMapLayer(config.url, 
+                { 
+                    opacity: 0.5, 
+                    layers : visibleLayers,
+                    token : token || null
+                });
+
+            em.auth.addHandler(layer);
+
+            if (config.visible === true) {
+                em.map.addLayer(layer);
+            }
+
+            em.util.addLayer(layer, config.label, e, config.visible, config.expanded);
+        });
     }
 
     // UI load handler
@@ -96,15 +147,15 @@ var em = {
         var menu_container = document.getElementById('menu-container');
         var menu_show = document.getElementById('menu-show');
 
+        menu_show.className = window.innerWidth < 768 ? 
+            'menu-collapser hide' : 
+            '';
+
         em.resize = function () {
             console.log('menu resize');
             menu.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
             menu_container.setAttribute('style', 'height: ' + window.innerHeight + 'px;');
         };
-
-        menu_show.className = window.innerWidth < 768 ? 
-            'menu-collapser hide' : 
-            '';
 
         window.addEventListener("resize", em.resize, true);
         em.resize();
