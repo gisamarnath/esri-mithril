@@ -57,6 +57,7 @@
 
         view: function (ctrl) {
             var body;
+
             switch (ctrl.type()) {
                 case 'auth' : 
                     body = [ 
@@ -75,7 +76,7 @@
                     ];
                     break;
                 default :
-                    body = m('p', 'One configurable body');
+                    body = m('p', '');
                     break;
             }
 

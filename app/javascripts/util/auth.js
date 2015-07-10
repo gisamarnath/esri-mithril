@@ -28,10 +28,11 @@
 
         init : function (config, callback) {
             var domain = em.util.getDomainFromUrl(config.loginUrl);
-            var active = activeTokens[domain];
 
-            if (active && active.expires && active.expires > Date.now()) {
-                callback(active.token);
+            var token = em.auth.getToken(domain);
+
+            if (token !== null) {
+                callback(token);
                 return;
             }
 
@@ -63,7 +64,7 @@
 
                     em.component.Popup.hide();
 
-                    activeTokens[domain] = { expires : response.expires, token : response.token };
+                    em.auth.setToken(domain, response.token, response.expires);
 
                     callback(response.token);
                 });
@@ -81,6 +82,37 @@
             layer.on('authenticationrequired', function (e) {
                 console.log(arguments);
             });
+        },
+
+        setToken : function (domain, token, expires) {
+            activeTokens[domain] = { expires : expires, token : token };
+
+            window.localStorage.setItem(domain + 'token', token);
+            window.localStorage.setItem(domain + 'expires', expires);
+        },
+
+        getToken : function (domain) {
+            var active = activeTokens[domain];
+
+            if (active && active.expires && active.expires > Date.now()) {
+                return active.token;
+            }
+
+            var token = localStorage.getItem(domain + 'token');
+            var expires = localStorage.getItem(domain + 'expires');
+
+            if (token === null || expires === null || expires <= Date.now()) {
+                return null;
+            }
+
+            console.log('found token in storage', domain);
+
+            activeTokens[domain] = { 
+                expires : expires, 
+                token : token 
+            };
+
+            return token;
         }
     };
 })();
