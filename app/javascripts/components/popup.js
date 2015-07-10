@@ -14,7 +14,7 @@
                 popup = $('#em-modal');
             }
 
-            popup.modal('show');
+            popup.modal({ backdrop : 'static', keyboard : false });
         },
 
         hide : function () {
@@ -83,18 +83,18 @@
             return m('div.modal-dialog',
                 m('div.modal-content',
                     m('div.modal-header', [
-                        m('button.close', 
-                            { 
-                                'data-dismiss' : 'modal',
-                                'aria-label' : 'Close'
-                            },
-                            m('span', m.trust('&times;'))
-                        ),
+                        // m('button.close', 
+                        //     { 
+                        //         'data-dismiss' : 'modal',
+                        //         'aria-label' : 'Close'
+                        //     },
+                        //     m('span', m.trust('&times;'))
+                        // ),
                         m('h4.modal-title', ctrl.title())
                     ]),
                     m('div.modal-body', body),
                     m('div.modal-footer',
-                        m('button.btn.btn-default', { type : 'button', 'data-dismiss' : 'modal' }, 'Close'),
+                        // m('button.btn.btn-default', { type : 'button', 'data-dismiss' : 'modal' }, 'Close'),
                         m('button.btn.btn-primary', { type : 'button', onclick : ctrl.save }, 'Save')
                     )
                 )

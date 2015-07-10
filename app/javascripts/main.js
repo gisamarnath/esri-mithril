@@ -44,6 +44,13 @@ var em = {
                 visible : true,
                 expanded : false,
                 loginUrl : 'http://sampleserver6.arcgisonline.com/arcgis/tokens/generateToken'
+            },
+            {
+                label : 'REMC Test',
+                url : 'https://go1dev.geoorganizer.com/arcgis/rest/services/RandolphElectric/REMC_AssetInspections/MapServer',
+                visible : true,
+                expanded : false,
+                loginUrl : 'https://go1dev.geoorganizer.com/arcgis/tokens/generateToken'
             }
         ],
 

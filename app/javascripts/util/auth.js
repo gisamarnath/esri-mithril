@@ -20,6 +20,65 @@
      */
     var popupConfig = em.config.popup;
 
+    function shiftQueue() {
+        queue.shift();
+
+        if (queue.length <= 0) {
+            return;
+        }
+
+        var req = queue[0];
+        getToken(req.config, req.callback);
+    }
+
+    function getToken(config, callback) {
+        var domain = em.util.getDomainFromUrl(config.loginUrl);
+
+        var token = em.auth.getToken(domain);
+
+        if (token !== null) {
+            callback(token);
+            shiftQueue();
+            return;
+        }
+
+        em.auth.showPopup(domain);
+
+        var handle = subscribe('popup.save', function (username, password) {
+            unsubscribe(handle);
+
+            if (!username || !password) {
+                console.log('popup.save returned poorly', arguments);
+                return;
+            }
+
+            L.esri.post(config.loginUrl, {
+                username: username,
+                password: password,
+                f: 'json',
+                expiration: 86400,
+                client: 'referer',
+                referer: window.location.origin
+            }, function (e, response) {
+                
+                if (!response || !response.token) {
+                    // try again
+                    console.log('token was bad', response);
+                    em.config.popup.warning('Invalid credentials. Try again.');
+                    return;
+                }
+
+                em.component.Popup.hide();
+
+                em.auth.setToken(domain, response.token, response.expires);
+
+                callback(response.token);
+
+                shiftQueue();
+            });
+        });
+    }
+
     /**
      * Service object for managing secured layers
      * @type {Object}
@@ -27,48 +86,14 @@
     em.auth = {
 
         init : function (config, callback) {
-            var domain = em.util.getDomainFromUrl(config.loginUrl);
+            queue.push({ config : config, callback : callback });
 
-            var token = em.auth.getToken(domain);
-
-            if (token !== null) {
-                callback(token);
+            if (queue.length > 1) {
                 return;
             }
 
-            em.auth.showPopup(domain);
-
-            var handle = subscribe('popup.save', function (username, password) {
-                unsubscribe(handle);
-
-                if (!username || !password) {
-                    console.log('popup.save returned poorly', arguments);
-                    return;
-                }
-
-                L.esri.post(config.loginUrl, {
-                    username: username,
-                    password: password,
-                    f: 'json',
-                    expiration: 86400,
-                    client: 'referer',
-                    referer: window.location.origin
-                }, function (e, response) {
-                    
-                    if (!response || !response.token) {
-                        // try again
-                        console.log('token was bad', response);
-                        em.config.popup.warning('Invalid credentials. Try again.');
-                        return;
-                    }
-
-                    em.component.Popup.hide();
-
-                    em.auth.setToken(domain, response.token, response.expires);
-
-                    callback(response.token);
-                });
-            });
+            var req = queue[0];
+            getToken(req.config, req.callback);
         },
 
         showPopup : function (domain) {

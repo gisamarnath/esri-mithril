@@ -43,7 +43,7 @@
                 m('#menu-show', { onclick : ctrl.toggle_menu }, 
                     m('span', { class : 'glyphicon glyphicon-option-vertical' })
                 ),
-                m('#em-modal.modal.fade', { role : 'dialog', tabindex : -1 }, m.component(em.component.Popup))
+                m('#em-modal.modal', { role : 'dialog', tabindex : -1 }, m.component(em.component.Popup))
             ];
         }
     };
