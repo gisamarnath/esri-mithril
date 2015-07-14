@@ -39,11 +39,18 @@ var em = {
                 expanded : false
             },
             {
+                // user / pass = user1 / user1
                 label : 'Auth Test',
                 url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire_secure_ac/MapServer',
                 visible : true,
                 expanded : false,
                 loginUrl : 'http://sampleserver6.arcgisonline.com/arcgis/tokens/generateToken'
+            },
+            {
+                label : 'Group Test',
+                url : 'http://sampleserver5.arcgisonline.com/arcgis/rest/services/Water_Network/MapServer',
+                visible : true,
+                expanded : false
             }
         ],
 
@@ -106,38 +113,12 @@ var em = {
             // if loginUrl is present then the layer needs a token
             if (l.loginUrl) {
                 em.auth.init(l, function (token) {
-                    loadLayer(l, token);
+                    em.util.getLayerMetadata(l, token);
                 });
             }
             else {
-                loadLayer(l);
+                em.util.getLayerMetadata(l);
             }
-        });
-    }
-
-    /**
-     * Loads an individual layers legend, creates map layer, and adds layer to map
-     * 
-     * @param  {Object}
-     * @param  {String}
-     * @return {null}
-     */
-    function loadLayer(config, token) {
-        em.util.getLegend(config, token, function (e, visibleLayers) {
-            var layer = L.esri.dynamicMapLayer(config.url, 
-                { 
-                    opacity: 0.5, 
-                    layers : visibleLayers,
-                    token : token || null
-                });
-
-            em.auth.addHandler(layer);
-
-            if (config.visible === true) {
-                em.map.addLayer(layer);
-            }
-
-            em.util.addLayer(layer, config.label, e, config.visible, config.expanded);
         });
     }
 

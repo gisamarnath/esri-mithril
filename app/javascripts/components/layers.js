@@ -3,15 +3,12 @@
  */
 (function() {
 
-    "use strict";
-
-    
+    'use strict';
+        
     em.component.Layers = {
         controller: function (args) {
             var that = this;
             this.layers = em.vm.layers;
-
-            console.log(this.layers());
 
             this.toggleServiceVisibility = function (e) {
                 this.visible = !this.visible;
@@ -151,67 +148,68 @@
                             m('div.bg-info.clearfix.layer-header', 
                                 [
                                     m('h4.inline-block', item.label),
-                                    m('div.btn-group.pull-right', [
-                                        m('button.btn.btn-default.dropdown-toggle', 
-                                            { 'data-toggle' : 'dropdown' },
-                                            [
-                                                'Options',
-                                                m('span.caret', '')
-                                            ]
-                                        ),
-                                        m('ul.dropdown-menu', [
-                                            m('li', m('a[href=#]', 
-                                                { onclick : ctrl.toggleServiceVisibility.bind(item) },
-                                                item.visible === false ? 'Show Layer' : 'Hide Layer')),
-                                            m('li', m('a[href=#]', 
-                                                { onclick : ctrl.toggleServiceExpanded.bind(item) },
-                                                item.expanded === false ? 'Expand' : 'Collapse')),
-                                            m('li.divider', { role : 'separator' }),
-                                            m('li', m('a[href=#]', { onclick : ctrl.expandAll.bind(item) }, 'Expand All')),
-                                            m('li', m('a[href=#]', { onclick : ctrl.collapseAll.bind(item) }, 'Collapse All')),
-                                            m('li.divider', { role : 'separator' }),
-                                            m('li', m('a[href=#]', { onclick : ctrl.showAll.bind(item) }, 'Show All')),
-                                            m('li', m('a[href=#]', { onclick : ctrl.hideAll.bind(item) }, 'Hide All'))
+                                    m('div.pull-right', [
+                                        m('button', 
+                                            { 
+                                                onclick : ctrl.toggleServiceVisibility.bind(item),
+                                                class : item.visible ? 'btn btn-primary' : 'btn btn-default'
+                                            },
+                                            m('span.glyphicon.glyphicon-eye-open')),
+                                        m('div.btn-group.pull-right', [
+                                            m('button.btn.btn-default.dropdown-toggle', 
+                                                { 'data-toggle' : 'dropdown' }, m('span.caret', '')
+                                            ),
+                                            m('ul.dropdown-menu', [
+                                                m('li', m('a[href=#]', 
+                                                    { onclick : ctrl.toggleServiceExpanded.bind(item) },
+                                                    item.expanded === false ? 'Expand' : 'Collapse')),
+                                                m('li.divider', { role : 'separator' }),
+                                                m('li', m('a[href=#]', { onclick : ctrl.expandAll.bind(item) }, 'Expand All')),
+                                                m('li', m('a[href=#]', { onclick : ctrl.collapseAll.bind(item) }, 'Collapse All')),
+                                                m('li.divider', { role : 'separator' }),
+                                                m('li', m('a[href=#]', { onclick : ctrl.showAll.bind(item) }, 'Show All')),
+                                                m('li', m('a[href=#]', { onclick : ctrl.hideAll.bind(item) }, 'Hide All'))
+                                            ])
                                         ])
                                     ])
                                 ]
-                            ),
-                            m('div', { style : 'display: ' + (item.expanded === false ? 'none;' : 'block;') },
-                                item.legend.layers.map(function (l) {
-                                    return m('div.panel.panel-default', [
-                                        m('div.panel-heading.clearfix', [
-                                            m('span', l.layerName),
-                                            m('div.btn-group.pull-right', [
-                                                m('button', 
-                                                    { 
-                                                        'data-toggle' : 'dropdown',
-                                                        class : (item.visible === false || l.visible === false ?
-                                                            'btn btn-default dropdown-toggle' :
-                                                            'btn btn-primary dropdown-toggle')
-                                                    },
-                                                    m('span.caret', '')
-                                                ),
-                                                m('ul.dropdown-menu', [
-                                                    m('li', m('a[href=#]', 
-                                                        { onclick : ctrl.toggleLayerVisibility.bind({ item : item, legendLayer : l }) },
-                                                        (l.visible === false ? 'Show Layer' : 'Hide Layer'))),
-                                                    m('li', m('a[href=#]', 
-                                                        { onclick : ctrl.toggleLayerExpanded.bind(l) },
-                                                        (l.expanded === false ? 'Expand' : 'Collapse')))
-                                                ])
-                                            ])
-                                        ]),
-                                        m('ul.list-group', { style : l.expanded === false ? 'display: none;' : '' }, 
-                                            l.legend.map(function (legend) {
-                                                return m('li.list-group-item', [
-                                                    m('img', { src : 'data:' + legend.contentType + ';base64,' + legend.imageData }),
-                                                    m('span', legend.label || l.layerName || 'N/A')
-                                                ]);
-                                            })
-                                        )
-                                    ]);
-                                })
                             )
+                            // m('div', { style : 'display: ' + (item.expanded === false ? 'none;' : 'block;') },
+                            //     item.legend.layers.map(function (l) {
+                            //         return m('div.panel.panel-default', [
+                            //             m('div.panel-heading.clearfix', [
+                            //                 m('span', l.layerName),
+                            //                 m('div.btn-group.pull-right', [
+                            //                     m('button', 
+                            //                         { 
+                            //                             'data-toggle' : 'dropdown',
+                            //                             class : (item.visible === false || l.visible === false ?
+                            //                                 'btn btn-default dropdown-toggle' :
+                            //                                 'btn btn-primary dropdown-toggle')
+                            //                         },
+                            //                         m('span.caret', '')
+                            //                     ),
+                            //                     m('ul.dropdown-menu', [
+                            //                         m('li', m('a[href=#]', 
+                            //                             { onclick : ctrl.toggleLayerVisibility.bind({ item : item, legendLayer : l }) },
+                            //                             (l.visible === false ? 'Show Layer' : 'Hide Layer'))),
+                            //                         m('li', m('a[href=#]', 
+                            //                             { onclick : ctrl.toggleLayerExpanded.bind(l) },
+                            //                             (l.expanded === false ? 'Expand' : 'Collapse')))
+                            //                     ])
+                            //                 ])
+                            //             ]),
+                            //             m('ul.list-group', { style : l.expanded === false ? 'display: none;' : '' }, 
+                            //                 l.legend.map(function (legend) {
+                            //                     return m('li.list-group-item', [
+                            //                         m('img', { src : 'data:' + legend.contentType + ';base64,' + legend.imageData }),
+                            //                         m('span', legend.label || l.layerName || 'N/A')
+                            //                     ]);
+                            //                 })
+                            //             )
+                            //         ]);
+                            //     })
+                            // )
                         ]);
                     })
                 ])
