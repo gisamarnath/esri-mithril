@@ -50,28 +50,28 @@
             }
 
             this.toggleLayerVisibility = function (e) {
-                // 'this' hasOwnProperty item and legendLayer
-                var visibleLayers = this.item.layer.getLayers();
-                var idx = visibleLayers.indexOf(this.legendLayer.layerId);
+                // 'this' hasOwnProperty item and info
+                var visibleLayers = this.parent.layer.getLayers();
+                var idx = visibleLayers.indexOf(this.info.id);
 
                 if (idx !== -1) {
-                    this.legendLayer.visible = false;
+                    this.info.visible = false;
                 }
                 else {
-                    this.legendLayer.visible = true;
+                    this.info.visible = true;
 
                     // if the service layer is hidden then we need to show it
                     // and add it to the map
-                    if (this.item.visible !== true) {
-                        this.item.visible = true;
+                    if (this.parent.visible !== true) {
+                        this.parent.visible = true;
 
-                        if (em.map.hasLayer(this.item.layer) !== true) {
-                            em.map.addLayer(this.item.layer);
+                        if (em.map.hasLayer(this.parent.layer) !== true) {
+                            em.map.addLayer(this.parent.layer);
                         }
                     }
                 }
 
-                _toggleLayerVisibility(this.item.layer, [this.legendLayer.layerId], this.legendLayer.visible);
+                _toggleLayerVisibility(this.parent.layer, [this.info.id], this.info.visible);
 
                 e.preventDefault();
             };
@@ -87,8 +87,8 @@
                     item.expanded = true;
                 }
 
-                item.legend.layers.forEach(function (layer, idx) {
-                    layer.expanded = expanded;
+                item.layerInfos.forEach(function (info, idx) {
+                    info.expanded = expanded;
                 });
             }
 
@@ -105,19 +105,21 @@
             this.showAll = function (e) {
                 var visibleLayers = [];
 
-                // if the service layer is hidden then we need to show it
-                // and add it to the map
-                if (this.visible !== true) {
-                    this.visible = true;
+                this.visible = true;
 
-                    if (em.map.hasLayer(this.layer) !== true) {
-                        em.map.addLayer(this.layer);
-                    }
+                if (em.map.hasLayer(this.layer) !== true) {
+                    em.map.addLayer(this.layer);
                 }
 
-                this.legend.layers.forEach(function (layer, idx) {
-                    layer.visible = true;
-                    visibleLayers.push(layer.layerId);
+                this.layerInfos.forEach(function (info, idx) {
+                    info.visible = true;
+
+                    if (info.subLayerIds === null) {
+                        visibleLayers.push(info.id);
+                    }
+                    else {
+                        visibleLayers.join(info.subLayerIds);
+                    }
                 });
 
                 _toggleLayerVisibility(this.layer, visibleLayers, true);
@@ -125,14 +127,9 @@
             };
 
             this.hideAll = function (e) {
-                var visibleLayers = [];
+                this.layer.setLayers([-1]);
+                this.visible = false;
 
-                this.legend.layers.forEach(function (layer, idx) {
-                    layer.visible = false;
-                    visibleLayers.push(layer.layerId);
-                });
-
-                _toggleLayerVisibility(this.layer, visibleLayers, false);
                 e.preventDefault();
             };
 
@@ -149,15 +146,17 @@
                                 [
                                     m('h4.inline-block', item.label),
                                     m('div.pull-right', [
-                                        m('button', 
-                                            { 
-                                                onclick : ctrl.toggleServiceVisibility.bind(item),
-                                                class : item.visible ? 'btn btn-primary' : 'btn btn-default'
-                                            },
-                                            m('span.glyphicon.glyphicon-eye-open')),
                                         m('div.btn-group.pull-right', [
+                                            m('button', 
+                                                { 
+                                                    onclick : ctrl.toggleServiceVisibility.bind(item),
+                                                    class : item.visible ? 'btn btn-primary' : 'btn btn-default'
+                                                },
+                                                m('span.glyphicon.glyphicon-eye-open')
+                                            ),
                                             m('button.btn.btn-default.dropdown-toggle', 
-                                                { 'data-toggle' : 'dropdown' }, m('span.caret', '')
+                                                { 'data-toggle' : 'dropdown' }, 
+                                                m('span.caret', '')
                                             ),
                                             m('ul.dropdown-menu', [
                                                 m('li', m('a[href=#]', 
@@ -173,43 +172,66 @@
                                         ])
                                     ])
                                 ]
+                            ),
+                            m('div', { style : 'display: ' + (item.expanded === false ? 'none;' : 'block;') },
+                                item.layerInfos.map(function (info) {
+
+                                    var legend = null;
+                                    var header = [m('span', info.name)];
+                                    
+                                    var dropdown = [
+                                        m('button.btn.btn-default.dropdown-toggle', 
+                                            { 
+                                                'data-toggle' : 'dropdown',
+                                            },
+                                            m('span.caret', '')
+                                        ),
+                                        m('ul.dropdown-menu', [
+                                            m('li', m('a[href=#]', 
+                                                { onclick : ctrl.toggleLayerExpanded.bind(info) },
+                                                (info.expanded === false ? 'Expand' : 'Collapse')))
+                                        ])
+                                    ];
+
+                                    if (info.subLayers) {
+                                        legend = m.component(em.component.GroupLayer, { item : item, info : info });
+                                    }
+                                    else if (info.legend.legend.length === 1) {
+                                        header.unshift(m('img', { 
+                                            src : 'data:' + info.legend.legend[0].contentType + ';base64,' + info.legend.legend[0].imageData 
+                                        }));
+                                        legend = null;
+                                        dropdown = null;
+                                    }
+                                    else {
+                                        legend = m('ul.list-group', { style : info.expanded === false ? 'display: none;' : '' }, 
+                                            info.legend.legend.map(function (lgnd) {
+                                                return m('li.list-group-item', [
+                                                    m('img', { src : 'data:' + lgnd.contentType + ';base64,' + lgnd.imageData }),
+                                                    m('span', lgnd.label || info.name || 'N/A')
+                                                ]);
+                                            })
+                                        );
+                                    }
+
+                                    return m('div.panel.panel-default', [
+                                        m('div.panel-heading.clearfix', [
+                                            header,
+                                            m('div.btn-group.pull-right', [
+                                                m('button', 
+                                                    { 
+                                                        onclick : ctrl.toggleLayerVisibility.bind({ parent : item, info : info }),
+                                                        class : (item.visible === false || info.visible === false ? 
+                                                            'btn btn-default' : 'btn btn-primary')
+                                                    },
+                                                    m('span.glyphicon.glyphicon-eye-open')),
+                                                dropdown
+                                            ])
+                                        ]),
+                                        legend
+                                    ]);
+                                })
                             )
-                            // m('div', { style : 'display: ' + (item.expanded === false ? 'none;' : 'block;') },
-                            //     item.legend.layers.map(function (l) {
-                            //         return m('div.panel.panel-default', [
-                            //             m('div.panel-heading.clearfix', [
-                            //                 m('span', l.layerName),
-                            //                 m('div.btn-group.pull-right', [
-                            //                     m('button', 
-                            //                         { 
-                            //                             'data-toggle' : 'dropdown',
-                            //                             class : (item.visible === false || l.visible === false ?
-                            //                                 'btn btn-default dropdown-toggle' :
-                            //                                 'btn btn-primary dropdown-toggle')
-                            //                         },
-                            //                         m('span.caret', '')
-                            //                     ),
-                            //                     m('ul.dropdown-menu', [
-                            //                         m('li', m('a[href=#]', 
-                            //                             { onclick : ctrl.toggleLayerVisibility.bind({ item : item, legendLayer : l }) },
-                            //                             (l.visible === false ? 'Show Layer' : 'Hide Layer'))),
-                            //                         m('li', m('a[href=#]', 
-                            //                             { onclick : ctrl.toggleLayerExpanded.bind(l) },
-                            //                             (l.expanded === false ? 'Expand' : 'Collapse')))
-                            //                     ])
-                            //                 ])
-                            //             ]),
-                            //             m('ul.list-group', { style : l.expanded === false ? 'display: none;' : '' }, 
-                            //                 l.legend.map(function (legend) {
-                            //                     return m('li.list-group-item', [
-                            //                         m('img', { src : 'data:' + legend.contentType + ';base64,' + legend.imageData }),
-                            //                         m('span', legend.label || l.layerName || 'N/A')
-                            //                     ]);
-                            //                 })
-                            //             )
-                            //         ]);
-                            //     })
-                            // )
                         ]);
                     })
                 ])

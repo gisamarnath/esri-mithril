@@ -67,7 +67,18 @@ var em = {
         // current active basemap
         basemap : m.prop(L.esri.basemapLayer("Streets")),
 
-        // { layer : {}, legend : {} }
+        /**
+         * [
+         *     {
+         *         label, layer, visible, expanded, layerInfos [
+         *             id, max/minScale, name, parentLayerId, legend, subLayerIds, subLayers [
+         *                 recursively repeat layer infos object here
+         *             ]
+         *         ]
+         *     }
+         * ]
+         * @type {Array}
+         */
         layers : m.prop([])
     }
 };

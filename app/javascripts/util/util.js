@@ -102,6 +102,8 @@
                 var layerInfos = metadata.layers;
                 var layerConfigs = [];
 
+
+
                 for (var zz = 0; zz < legend.length; zz++) {
                     var leg = legend[zz];
 
@@ -119,10 +121,12 @@
                     layerConfigs.push(linfo);
 
                     if (linfo.subLayerIds === null) {
+                        linfo.expanded = config.expanded;
+                        linfo.visible = true;
                         continue;
                     }
 
-                    populateLayerInfos(linfo, layerInfos);
+                    populateLayerInfos(linfo, layerInfos, config.expanded);
                 }
 
                 em.util.addLayer(layer, config.label, layerConfigs, config.visible, config.expanded);
@@ -130,7 +134,7 @@
         });
     };
 
-    function populateLayerInfos(l, layerInfos) {
+    function populateLayerInfos(l, layerInfos, expanded) {
         l.subLayers = [];
 
         for (var sub = 0; sub < l.subLayerIds.length; sub++) {
@@ -143,8 +147,11 @@
                 var subLayer = layerInfos.splice(ii, 1)[0];
 
                 if (subLayer.subLayerIds !== null) {
-                    populateLayerInfos(subLayer, layerInfos);
+                    populateLayerInfos(subLayer, layerInfos, expanded);
                 }
+
+                subLayer.expanded = expanded;
+                subLayer.visible = true;
 
                 l.subLayers.push(subLayer);
             }
