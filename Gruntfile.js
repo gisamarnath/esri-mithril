@@ -4,7 +4,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         jshint : {
-            all: ['Gruntfile.js', 'package.json', 'app/javascripts/**/*.js'],
+            all: ['Gruntfile.js', 'package.json', 'app/javascripts/**/*.js', '!app/javascripts/lib/bootstrap-toggle.js'],
             options: {
                 jshintrc: true
             }
