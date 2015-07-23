@@ -37,6 +37,7 @@ module.exports = function(grunt) {
               'app/javascripts/components/tools.js',
               'app/javascripts/components/menu.js',
               'app/javascripts/components/parent.js',
+              'app/javascripts/lib/bootstrap-toggle.js',
             ],
             // the location of the resulting JS file
             dest: 'dist/<%= pkg.name %>.js'
@@ -45,6 +46,7 @@ module.exports = function(grunt) {
           css: {
             src: [
               'app/stylesheets/*.css',
+              'app/stylesheets/lib/*.css',
             ],
             dest: 'dist/<%= pkg.name %>.css'
           }
