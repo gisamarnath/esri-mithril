@@ -26,6 +26,7 @@ module.exports = function(grunt) {
             // the files to concatenate
             src: [
               'node_modules/minpubsub/minpubsub.js',
+              'app/javascripts/lib/bootstrap-toggle.js',
               'app/javascripts/main.js',
               'app/javascripts/util/util.js',
               'app/javascripts/util/auth.js',
@@ -37,7 +38,6 @@ module.exports = function(grunt) {
               'app/javascripts/components/tools.js',
               'app/javascripts/components/menu.js',
               'app/javascripts/components/parent.js',
-              'app/javascripts/lib/bootstrap-toggle.js',
             ],
             // the location of the resulting JS file
             dest: 'dist/<%= pkg.name %>.js'
@@ -45,8 +45,8 @@ module.exports = function(grunt) {
           // concats all css to dist/css
           css: {
             src: [
-              'app/stylesheets/*.css',
               'app/stylesheets/lib/*.css',
+              'app/stylesheets/*.css',
             ],
             dest: 'dist/<%= pkg.name %>.css'
           }
